@@ -6,27 +6,36 @@
 //  Copyright © 2020 Nassir Ali. All rights reserved.
 //
 
+#import "Constants.h"
+#import "MeasurementHelper.h"
 #import "SignInViewController.h"
 
-@interface SignInViewController ()
+@import Firebase;
+@import GoogleSignIn;
+@import FirebaseAuth;
 
+@interface SignInViewController ()
+@property(weak, nonatomic) IBOutlet GIDSignInButton *signInButton;
+@property(strong, nonatomic) FIRAuthStateDidChangeListenerHandle handle;
 @end
 
 @implementation SignInViewController
 
 - (void)viewDidLoad {
-    [super viewDidLoad];
-    // Do any additional setup after loading the view.
+  [super viewDidLoad];
+  [GIDSignIn sharedInstance].presentingViewController = self;
+  [[GIDSignIn sharedInstance] restorePreviousSignIn];
+  self.handle = [[FIRAuth auth]
+                 addAuthStateDidChangeListener:^(FIRAuth *_Nonnull auth, FIRUser *_Nullable user) {
+                   if (user) {
+                     [MeasurementHelper sendLoginEvent];
+                     [self performSegueWithIdentifier:@"SegueToMain" sender:nil];
+                   }
+                 }];
 }
 
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
+- (void)dealloc {
+  [[FIRAuth auth] removeAuthStateDidChangeListener:_handle];
 }
-*/
 
 @end
