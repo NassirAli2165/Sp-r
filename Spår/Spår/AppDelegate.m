@@ -11,7 +11,6 @@
 @import GoogleSignIn;
 
 @interface AppDelegate ()
-
 @end
 
 
@@ -36,19 +35,27 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
 - (void)signIn:(GIDSignIn *)signIn
 didSignInForUser:(GIDGoogleUser *)user
      withError:(NSError *)error {
-  if (error != nil) {
+  if (error == nil) {
     GIDAuthentication *authentication = user.authentication;
     FIRAuthCredential *credential =
     [FIRGoogleAuthProvider credentialWithIDToken:authentication.idToken
                                      accessToken:authentication.accessToken];
     [[FIRAuth auth] signInWithCredential:credential completion:^(FIRAuthDataResult * _Nullable result, NSError * _Nullable error) {
-      if (error) {
-        NSLog(@"Error %@", error.localizedDescription);
-      }
-    }];
+          if (error) {
+            NSLog(@"Error %@", error.localizedDescription);
+          }
+        }];
   } else {
-    NSLog(@"Error %@", error.localizedDescription);
+        NSLog(@"Error %@", error.localizedDescription);
   }
+}
+
+
+- (void)signIn:(GIDSignIn *)signIn
+didDisconnectWithUser:(GIDGoogleUser *)user
+     withError:(NSError *)error {
+  // Perform any operations when the user disconnects from app here.
+  // ...
 }
 
 #pragma mark - UISceneSession lifecycle

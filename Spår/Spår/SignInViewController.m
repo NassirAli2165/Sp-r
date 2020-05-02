@@ -24,12 +24,12 @@
 - (void)viewDidLoad {
   [super viewDidLoad];
   [GIDSignIn sharedInstance].presentingViewController = self;
-  [[GIDSignIn sharedInstance] restorePreviousSignIn];
+  [[GIDSignIn sharedInstance] signIn];
   self.handle = [[FIRAuth auth]
                  addAuthStateDidChangeListener:^(FIRAuth *_Nonnull auth, FIRUser *_Nullable user) {
                    if (user) {
                      [MeasurementHelper sendLoginEvent];
-                     [self performSegueWithIdentifier:@"SegueToMain" sender:nil];
+                     [self performSegueWithIdentifier:@"SegueToMainView" sender:nil];
                    }
                  }];
 }
